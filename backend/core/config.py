@@ -1,7 +1,11 @@
 # 配置管理模块
 
 import os
-from pydantic import BaseSettings
+try:
+    from pydantic_settings import BaseSettings
+except ImportError:
+    # 兼容旧版本pydantic
+    from pydantic import BaseSettings
 from typing import Optional
 
 class Settings(BaseSettings):

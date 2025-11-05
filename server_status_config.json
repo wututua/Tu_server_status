@@ -1,0 +1,43 @@
+{
+  "application": {
+    "name": "Server Status Monitor",
+    "version": "1.0.0",
+    "description": "实时服务器监控系统",
+    "author": "wututua",
+    "repository": "https://github.com/wututua/Tu_server_status/",
+    "contact": "wututua@qq.com"
+  },
+  "installation": {
+    "directory": "C:\\Program Files\\ServerStatusMonitor",
+    "service_name": "ServerStatusMonitor",
+    "port": 48877,
+    "log_directory": "%TEMP%\\ServerStatusMonitor"
+  },
+  "requirements": {
+    "minimum_windows_version": "6.1",
+    "minimum_powershell_version": "3.0",
+    "python_required": true,
+    "python_version": "3.7+",
+    "required_packages": [
+      "fastapi>=0.68.0",
+      "uvicorn>=0.15.0",
+      "psutil>=5.8.0",
+      "requests>=2.25.0"
+    ]
+  },
+  "deployment": {
+    "supported_modes": ["SILENT", "VERYSILENT", "QUIET"],
+    "backup_enabled": true,
+    "rollback_enabled": true,
+    "log_retention_days": 30
+  },
+  "registry": {
+    "application_key": "HKLM:\\SOFTWARE\\ServerStatusMonitor",
+    "uninstall_key": "HKLM:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\ServerStatusMonitor"
+  },
+  "environment": {
+    "path_variable": "SERVER_STATUS_HOME",
+    "port_variable": "SERVER_STATUS_PORT",
+    "add_to_path": true
+  }
+}

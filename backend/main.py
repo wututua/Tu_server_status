@@ -30,6 +30,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# 注册路由
+app.include_router(monitoring_router)
+app.include_router(health_router)
+
+# 注册路由
+app.include_router(monitoring_router)
+app.include_router(health_router)
+
 # 启动应用
 if __name__ == "__main__":
     # 启动FastAPI服务
