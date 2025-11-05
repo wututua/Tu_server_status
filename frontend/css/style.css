@@ -848,6 +848,406 @@ select:focus {
     }
 }
 
+/* 新添加的卡片样式 */
+
+/* 版本信息样式 */
+.version-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.05);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+}
+
+.version-info i {
+    color: var(--primary-color);
+}
+
+/* 网络连接卡片样式 */
+.connections-card .card-header i {
+    color: var(--success-color);
+}
+
+.connections-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80px;
+    height: 80px;
+    background: rgba(76, 175, 80, 0.1);
+    border-radius: 50%;
+}
+
+.connections-icon i {
+    font-size: 2rem;
+    color: var(--success-color);
+}
+
+.connections-card .value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--success-color);
+}
+
+/* 显卡信息卡片样式 */
+.gpu-card .card-header i {
+    color: var(--warning-color);
+}
+
+.gpu-card .progress-ring-bg {
+    stroke: var(--border-color);
+    fill: none;
+    stroke-width: 3;
+}
+
+.gpu-card .progress-ring-fill {
+    stroke: var(--warning-color);
+    fill: none;
+    stroke-width: 3;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.5s ease;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+}
+
+.gpu-card .value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--warning-color);
+}
+
+/* 无显卡状态样式 */
+.no-gpu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-md);
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.no-gpu i {
+    font-size: 3rem;
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-muted);
+}
+
+.no-gpu-message {
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+/* 响应式调整 */
+@media (max-width: 1200px) {
+    .overview-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .overview-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .version-info {
+        font-size: 0.8rem;
+        padding: var(--spacing-xs);
+    }
+}
+
+@media (max-width: 480px) {
+    .overview-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .connections-icon {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .connections-icon i {
+        font-size: 1.5rem;
+    }
+    
+    .connections-card .value {
+        font-size: 2rem;
+    }
+}
+
+/* 客户端硬件信息样式 */
+.client-hardware-info {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-md);
+    box-shadow: var(--shadow-lg);
+    z-index: 1000;
+    max-width: 300px;
+    backdrop-filter: blur(10px);
+    animation: fadeIn 0.5s ease;
+}
+
+.client-hardware-info h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: var(--spacing-xs);
+}
+
+.network-info, .graphics-info {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-bottom: var(--spacing-sm);
+}
+
+.network-info strong, .graphics-info strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.status-online {
+    color: var(--success-color) !important;
+    font-weight: 600;
+}
+
+.status-offline {
+    color: var(--danger-color) !important;
+    font-weight: 600;
+}
+
+.error {
+    color: var(--danger-color) !important;
+    font-size: 0.8rem;
+    font-style: italic;
+}
+
+.graphics-info div {
+    margin-bottom: var(--spacing-xs);
+    padding-left: var(--spacing-sm);
+    border-left: 2px solid var(--warning-color);
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .client-hardware-info {
+        position: relative;
+        top: auto;
+        left: auto;
+        margin: var(--spacing-md);
+        max-width: none;
+    }
+}
+
+/* 新添加的卡片样式 */
+
+/* 版本信息样式 */
+.version-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.05);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+}
+
+.version-info i {
+    color: var(--primary-color);
+}
+
+/* 网络连接卡片样式 */
+.connections-card .card-header i {
+    color: var(--success-color);
+}
+
+.connections-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80px;
+    height: 80px;
+    background: rgba(76, 175, 80, 0.1);
+    border-radius: 50%;
+}
+
+.connections-icon i {
+    font-size: 2rem;
+    color: var(--success-color);
+}
+
+.connections-card .value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--success-color);
+}
+
+/* 显卡信息卡片样式 */
+.gpu-card .card-header i {
+    color: var(--warning-color);
+}
+
+.gpu-card .progress-ring-bg {
+    stroke: var(--border-color);
+    fill: none;
+    stroke-width: 3;
+}
+
+.gpu-card .progress-ring-fill {
+    stroke: var(--warning-color);
+    fill: none;
+    stroke-width: 3;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.5s ease;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+}
+
+.gpu-card .value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--warning-color);
+}
+
+/* 无显卡状态样式 */
+.no-gpu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-md);
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.no-gpu i {
+    font-size: 3rem;
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-muted);
+}
+
+.no-gpu-message {
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+/* 响应式调整 */
+@media (max-width: 1200px) {
+    .overview-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .overview-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .version-info {
+        font-size: 0.8rem;
+        padding: var(--spacing-xs);
+    }
+}
+
+@media (max-width: 480px) {
+    .overview-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .connections-icon {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .connections-icon i {
+        font-size: 1.5rem;
+    }
+    
+    .connections-card .value {
+        font-size: 2rem;
+    }
+}
+
+/* 客户端硬件信息样式 */
+.client-hardware-info {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-md);
+    box-shadow: var(--shadow-lg);
+    z-index: 1000;
+    max-width: 300px;
+    backdrop-filter: blur(10px);
+    animation: fadeIn 0.5s ease;
+}
+
+.client-hardware-info h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: var(--spacing-xs);
+}
+
+.network-info, .graphics-info {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-bottom: var(--spacing-sm);
+}
+
+.network-info strong, .graphics-info strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.status-online {
+    color: var(--success-color) !important;
+    font-weight: 600;
+}
+
+.status-offline {
+    color: var(--danger-color) !important;
+    font-weight: 600;
+}
+
+.error {
+    color: var(--danger-color) !important;
+    font-size: 0.8rem;
+    font-style: italic;
+}
+
+.graphics-info div {
+    margin-bottom: var(--spacing-xs);
+    padding-left: var(--spacing-sm);
+    border-left: 2px solid var(--warning-color);
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .client-hardware-info {
+        position: relative;
+        top: auto;
+        left: auto;
+        margin: var(--spacing-md);
+        max-width: none;
+    }
+}
+
 /* 服务器选择器样式 */
 .server-selector {
     display: flex;
@@ -974,5 +1374,405 @@ select:focus {
     
     .server-selector label {
         font-size: 0.8rem;
+    }
+}
+
+/* 新添加的卡片样式 */
+
+/* 版本信息样式 */
+.version-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.05);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+}
+
+.version-info i {
+    color: var(--primary-color);
+}
+
+/* 网络连接卡片样式 */
+.connections-card .card-header i {
+    color: var(--success-color);
+}
+
+.connections-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80px;
+    height: 80px;
+    background: rgba(76, 175, 80, 0.1);
+    border-radius: 50%;
+}
+
+.connections-icon i {
+    font-size: 2rem;
+    color: var(--success-color);
+}
+
+.connections-card .value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--success-color);
+}
+
+/* 显卡信息卡片样式 */
+.gpu-card .card-header i {
+    color: var(--warning-color);
+}
+
+.gpu-card .progress-ring-bg {
+    stroke: var(--border-color);
+    fill: none;
+    stroke-width: 3;
+}
+
+.gpu-card .progress-ring-fill {
+    stroke: var(--warning-color);
+    fill: none;
+    stroke-width: 3;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.5s ease;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+}
+
+.gpu-card .value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--warning-color);
+}
+
+/* 无显卡状态样式 */
+.no-gpu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-md);
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.no-gpu i {
+    font-size: 3rem;
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-muted);
+}
+
+.no-gpu-message {
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+/* 响应式调整 */
+@media (max-width: 1200px) {
+    .overview-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .overview-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .version-info {
+        font-size: 0.8rem;
+        padding: var(--spacing-xs);
+    }
+}
+
+@media (max-width: 480px) {
+    .overview-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .connections-icon {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .connections-icon i {
+        font-size: 1.5rem;
+    }
+    
+    .connections-card .value {
+        font-size: 2rem;
+    }
+}
+
+/* 客户端硬件信息样式 */
+.client-hardware-info {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-md);
+    box-shadow: var(--shadow-lg);
+    z-index: 1000;
+    max-width: 300px;
+    backdrop-filter: blur(10px);
+    animation: fadeIn 0.5s ease;
+}
+
+.client-hardware-info h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: var(--spacing-xs);
+}
+
+.network-info, .graphics-info {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-bottom: var(--spacing-sm);
+}
+
+.network-info strong, .graphics-info strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.status-online {
+    color: var(--success-color) !important;
+    font-weight: 600;
+}
+
+.status-offline {
+    color: var(--danger-color) !important;
+    font-weight: 600;
+}
+
+.error {
+    color: var(--danger-color) !important;
+    font-size: 0.8rem;
+    font-style: italic;
+}
+
+.graphics-info div {
+    margin-bottom: var(--spacing-xs);
+    padding-left: var(--spacing-sm);
+    border-left: 2px solid var(--warning-color);
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .client-hardware-info {
+        position: relative;
+        top: auto;
+        left: auto;
+        margin: var(--spacing-md);
+        max-width: none;
+    }
+}
+
+/* 新添加的卡片样式 */
+
+/* 版本信息样式 */
+.version-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.05);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+}
+
+.version-info i {
+    color: var(--primary-color);
+}
+
+/* 网络连接卡片样式 */
+.connections-card .card-header i {
+    color: var(--success-color);
+}
+
+.connections-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80px;
+    height: 80px;
+    background: rgba(76, 175, 80, 0.1);
+    border-radius: 50%;
+}
+
+.connections-icon i {
+    font-size: 2rem;
+    color: var(--success-color);
+}
+
+.connections-card .value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--success-color);
+}
+
+/* 显卡信息卡片样式 */
+.gpu-card .card-header i {
+    color: var(--warning-color);
+}
+
+.gpu-card .progress-ring-bg {
+    stroke: var(--border-color);
+    fill: none;
+    stroke-width: 3;
+}
+
+.gpu-card .progress-ring-fill {
+    stroke: var(--warning-color);
+    fill: none;
+    stroke-width: 3;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.5s ease;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+}
+
+.gpu-card .value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--warning-color);
+}
+
+/* 无显卡状态样式 */
+.no-gpu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-md);
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.no-gpu i {
+    font-size: 3rem;
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-muted);
+}
+
+.no-gpu-message {
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+/* 响应式调整 */
+@media (max-width: 1200px) {
+    .overview-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .overview-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .version-info {
+        font-size: 0.8rem;
+        padding: var(--spacing-xs);
+    }
+}
+
+@media (max-width: 480px) {
+    .overview-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .connections-icon {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .connections-icon i {
+        font-size: 1.5rem;
+    }
+    
+    .connections-card .value {
+        font-size: 2rem;
+    }
+}
+
+/* 客户端硬件信息样式 */
+.client-hardware-info {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-md);
+    box-shadow: var(--shadow-lg);
+    z-index: 1000;
+    max-width: 300px;
+    backdrop-filter: blur(10px);
+    animation: fadeIn 0.5s ease;
+}
+
+.client-hardware-info h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: var(--spacing-xs);
+}
+
+.network-info, .graphics-info {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-bottom: var(--spacing-sm);
+}
+
+.network-info strong, .graphics-info strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.status-online {
+    color: var(--success-color) !important;
+    font-weight: 600;
+}
+
+.status-offline {
+    color: var(--danger-color) !important;
+    font-weight: 600;
+}
+
+.error {
+    color: var(--danger-color) !important;
+    font-size: 0.8rem;
+    font-style: italic;
+}
+
+.graphics-info div {
+    margin-bottom: var(--spacing-xs);
+    padding-left: var(--spacing-sm);
+    border-left: 2px solid var(--warning-color);
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .client-hardware-info {
+        position: relative;
+        top: auto;
+        left: auto;
+        margin: var(--spacing-md);
+        max-width: none;
     }
 }

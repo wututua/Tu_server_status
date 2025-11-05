@@ -1,3 +1,139 @@
+/**
+ * 检测前端网络连接状态和显卡信息
+ * @returns {Object} 包含网络状态和显卡信息的对象
+ */
+function detectClientHardware() {
+    const result = {
+        network: {
+            status: 'unknown',
+            isOnline: false,
+            error: null
+        },
+        graphics: {
+            vendor: 'unknown',
+            renderer: 'unknown',
+            hasWebGL: false,
+            error: null
+        }
+    };
+
+    try {
+        // 1. 检测网络连接状态
+        if (typeof navigator !== 'undefined' && 'onLine' in navigator) {
+            result.network.isOnline = navigator.onLine;
+            result.network.status = navigator.onLine ? 'online' : 'offline';
+            
+            // 添加网络状态变化的监听器
+            if (typeof window !== 'undefined') {
+                window.addEventListener('online', () => {
+                    console.log('网络连接已恢复');
+                    result.network.isOnline = true;
+                    result.network.status = 'online';
+                });
+                
+                window.addEventListener('offline', () => {
+                    console.log('网络连接已断开');
+                    result.network.isOnline = false;
+                    result.network.status = 'offline';
+                });
+            }
+        } else {
+            result.network.error = '浏览器不支持网络状态检测';
+        }
+
+        // 2. 检测显卡信息（通过WebGL）
+        const canvas = document.createElement('canvas');
+        let gl = null;
+        
+        // 尝试获取WebGL上下文
+        const contexts = ['webgl', 'experimental-webgl', 'webgl2'];
+        for (const contextType of contexts) {
+            try {
+                gl = canvas.getContext(contextType);
+                if (gl) break;
+            } catch (e) {
+                // 继续尝试下一个上下文类型
+                continue;
+            }
+        }
+
+        if (gl) {
+            result.graphics.hasWebGL = true;
+            
+            // 获取显卡信息
+            const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+            if (debugInfo) {
+                result.graphics.vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL) || 'unknown';
+                result.graphics.renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) || 'unknown';
+            } else {
+                // 如果无法获取详细的显卡信息，尝试获取基本信息
+                try {
+                    const vendor = gl.getParameter(gl.VENDOR) || 'unknown';
+                    const renderer = gl.getParameter(gl.RENDERER) || 'unknown';
+                    
+                    result.graphics.vendor = vendor;
+                    result.graphics.renderer = renderer;
+                } catch (e) {
+                    result.graphics.error = '无法获取显卡详细信息: ' + e.message;
+                }
+            }
+            
+            // 检查WebGL功能支持
+            result.graphics.extensions = gl.getSupportedExtensions() || [];
+            
+        } else {
+            result.graphics.error = '浏览器不支持WebGL或WebGL被禁用';
+            result.graphics.hasWebGL = false;
+        }
+        
+    } catch (error) {
+        console.error('硬件检测失败:', error);
+        
+        // 提供详细的错误信息
+        if (error.name === 'SecurityError') {
+            result.graphics.error = '安全限制：无法访问显卡信息（可能是跨域问题）';
+        } else if (error.name === 'TypeError') {
+            result.graphics.error = '类型错误：显卡检测参数无效';
+        } else {
+            result.graphics.error = `检测失败: ${error.name} - ${error.message}`;
+        }
+    }
+
+    return result;
+}
+
+/**
+ * 格式化并显示客户端硬件信息
+ * @param {Object} hardwareInfo - 硬件检测结果
+ */
+function displayClientHardwareInfo(hardwareInfo) {
+    // 隐藏硬件信息显示，仅在控制台输出
+    console.log('客户端硬件信息:', hardwareInfo);
+    
+    // 清理可能存在的旧信息面板
+    const existingInfo = document.querySelector('.client-hardware-info');
+    if (existingInfo) {
+        existingInfo.remove();
+    }
+}
+
+/**
+ * 定期检测客户端硬件状态
+ */
+function startClientHardwareMonitoring() {
+    // 初始检测
+    const hardwareInfo = detectClientHardware();
+    displayClientHardwareInfo(hardwareInfo);
+    
+    // 定期更新网络状态（每30秒）
+    setInterval(() => {
+        const currentInfo = detectClientHardware();
+        displayClientHardwareInfo(currentInfo);
+    }, 30000);
+    
+    return hardwareInfo;
+}
+
 // 服务器监控系统 - 主应用逻辑
 class ServerMonitor {
     constructor() {
@@ -24,6 +160,9 @@ class ServerMonitor {
         await this.loadServerConfig();
         this.setupEventListeners();
         this.startTimeUpdate();
+        
+        // 检测客户端硬件信息
+        this.clientHardwareInfo = startClientHardwareMonitoring();
         
         // 仅在首次加载时显示加载动画
         if (this.isFirstLoad) {
@@ -258,7 +397,7 @@ class ServerMonitor {
     }
 
     /**
-     * 更新UI界面（无闪烁版本）
+     * 更新UI界面
      */
     updateUI(data) {
         // 条件式更新，仅在值发生变化时更新DOM
@@ -268,13 +407,18 @@ class ServerMonitor {
         this.updateNetworkInfo(data.network);
         this.updateSystemInfo(data);
         
+        // 新增功能更新
+        this.updateNetworkConnections(data.network_connections);
+        this.updateGPUInfo(data.gpu);
+        this.updateVersionInfo(data.version);
+        
         // 无动画效果，确保界面稳定
     }
 
 
 
     /**
-     * 更新CPU信息显示（无闪烁版本）
+     * 更新CPU信息显示
      */
     updateCPUInfo(cpu) {
         const cpuUsage = document.getElementById('cpuUsage');
@@ -587,6 +731,348 @@ class ServerMonitor {
         setTimeout(() => {
             this.hideError();
         }, 5000);
+    }
+
+    /**
+     * 更新网络连接数信息
+     */
+    updateNetworkConnections(connections) {
+        const connectionsElement = document.getElementById('networkConnections');
+        const activeConnectionsElement = document.getElementById('activeConnections');
+        const statusElement = document.getElementById('connectionsStatus');
+        
+        if (connectionsElement) {
+            this.updateTextIfChanged(connectionsElement, connections.toString());
+        }
+        
+        if (activeConnectionsElement) {
+            this.updateTextIfChanged(activeConnectionsElement, connections.toString());
+        }
+        
+        if (statusElement) {
+            if (connections > 1000) {
+                statusElement.textContent = '高负载';
+                statusElement.className = 'info-value status-error';
+            } else if (connections > 500) {
+                statusElement.textContent = '中等';
+                statusElement.className = 'info-value status-warning';
+            } else {
+                statusElement.textContent = '正常';
+                statusElement.className = 'info-value status-ok';
+            }
+        }
+    }
+
+    /**
+     * 更新显卡信息
+     */
+    updateGPUInfo(gpu) {
+        const gpuUsageElement = document.getElementById('gpuUsage');
+        const gpuMemoryUsedElement = document.getElementById('gpuMemoryUsed');
+        const gpuMemoryTotalElement = document.getElementById('gpuMemoryTotal');
+        const gpuNameElement = document.getElementById('gpuName');
+        const gpuRingElement = document.getElementById('gpuRing');
+        
+        if (!gpu.has_gpu) {
+            // 没有显卡的情况
+            if (gpuUsageElement) {
+                gpuUsageElement.textContent = '无显卡';
+                gpuUsageElement.style.color = 'var(--text-muted)';
+            }
+            if (gpuMemoryUsedElement) {
+                gpuMemoryUsedElement.textContent = '--';
+            }
+            if (gpuMemoryTotalElement) {
+                gpuMemoryTotalElement.textContent = '--';
+            }
+            if (gpuNameElement) {
+                gpuNameElement.textContent = '该服务器无显卡';
+            }
+            if (gpuRingElement) {
+                gpuRingElement.style.display = 'none';
+            }
+        } else {
+            // 有显卡的情况
+            if (gpuUsageElement) {
+                this.updateTextIfChanged(gpuUsageElement, `${gpu.gpu_usage}%`);
+                
+                // 根据使用率设置颜色
+                if (gpu.gpu_usage > 80) {
+                    gpuUsageElement.style.color = 'var(--danger-color)';
+                } else if (gpu.gpu_usage > 60) {
+                    gpuUsageElement.style.color = 'var(--warning-color)';
+                } else {
+                    gpuUsageElement.style.color = 'var(--warning-color)';
+                }
+            }
+            
+            if (gpuMemoryUsedElement) {
+                this.updateTextIfChanged(gpuMemoryUsedElement, `${(gpu.gpu_memory_used / 1024).toFixed(1)} GB`);
+            }
+            
+            if (gpuMemoryTotalElement) {
+                this.updateTextIfChanged(gpuMemoryTotalElement, `${(gpu.gpu_memory_total / 1024).toFixed(1)} GB`);
+            }
+            
+            if (gpuNameElement) {
+                this.updateTextIfChanged(gpuNameElement, gpu.gpu_name);
+            }
+            
+            if (gpuRingElement) {
+                gpuRingElement.style.display = 'block';
+                const circumference = 2 * Math.PI * 35;
+                const offset = circumference - (gpu.gpu_usage / 100) * circumference;
+                gpuRingElement.style.strokeDasharray = `${circumference} ${circumference}`;
+                gpuRingElement.style.strokeDashoffset = offset;
+                
+                // 根据使用率设置颜色
+                if (gpu.gpu_usage > 80) {
+                    gpuRingElement.style.stroke = 'var(--danger-color)';
+                } else if (gpu.gpu_usage > 60) {
+                    gpuRingElement.style.stroke = 'var(--warning-color)';
+                } else {
+                    gpuRingElement.style.stroke = 'var(--warning-color)';
+                }
+            }
+        }
+    }
+
+    /**
+     * 更新版本信息
+     */
+    updateVersionInfo(version) {
+        const versionElement = document.getElementById('backendVersion');
+        if (versionElement) {
+            this.updateTextIfChanged(versionElement, `版本: ${version}`);
+        }
+    }
+
+    /**
+     * 更新网络连接数信息
+     */
+    updateNetworkConnections(connections) {
+        const connectionsElement = document.getElementById('networkConnections');
+        const activeConnectionsElement = document.getElementById('activeConnections');
+        const statusElement = document.getElementById('connectionsStatus');
+        
+        if (connectionsElement) {
+            this.updateTextIfChanged(connectionsElement, connections.toString());
+        }
+        
+        if (activeConnectionsElement) {
+            this.updateTextIfChanged(activeConnectionsElement, connections.toString());
+        }
+        
+        if (statusElement) {
+            if (connections > 1000) {
+                statusElement.textContent = '高负载';
+                statusElement.className = 'info-value status-error';
+            } else if (connections > 500) {
+                statusElement.textContent = '中等';
+                statusElement.className = 'info-value status-warning';
+            } else {
+                statusElement.textContent = '正常';
+                statusElement.className = 'info-value status-ok';
+            }
+        }
+    }
+
+    /**
+     * 更新显卡信息
+     */
+    updateGPUInfo(gpu) {
+        const gpuUsageElement = document.getElementById('gpuUsage');
+        const gpuMemoryUsedElement = document.getElementById('gpuMemoryUsed');
+        const gpuMemoryTotalElement = document.getElementById('gpuMemoryTotal');
+        const gpuNameElement = document.getElementById('gpuName');
+        const gpuRingElement = document.getElementById('gpuRing');
+        
+        if (!gpu.has_gpu) {
+            // 没有显卡的情况
+            if (gpuUsageElement) {
+                gpuUsageElement.textContent = '无显卡';
+                gpuUsageElement.style.color = 'var(--text-muted)';
+            }
+            if (gpuMemoryUsedElement) {
+                gpuMemoryUsedElement.textContent = '--';
+            }
+            if (gpuMemoryTotalElement) {
+                gpuMemoryTotalElement.textContent = '--';
+            }
+            if (gpuNameElement) {
+                gpuNameElement.textContent = '该服务器无显卡';
+            }
+            if (gpuRingElement) {
+                gpuRingElement.style.display = 'none';
+            }
+        } else {
+            // 有显卡的情况
+            if (gpuUsageElement) {
+                this.updateTextIfChanged(gpuUsageElement, `${gpu.gpu_usage}%`);
+                
+                // 根据使用率设置颜色
+                if (gpu.gpu_usage > 80) {
+                    gpuUsageElement.style.color = 'var(--danger-color)';
+                } else if (gpu.gpu_usage > 60) {
+                    gpuUsageElement.style.color = 'var(--warning-color)';
+                } else {
+                    gpuUsageElement.style.color = 'var(--warning-color)';
+                }
+            }
+            
+            if (gpuMemoryUsedElement) {
+                this.updateTextIfChanged(gpuMemoryUsedElement, `${(gpu.gpu_memory_used / 1024).toFixed(1)} GB`);
+            }
+            
+            if (gpuMemoryTotalElement) {
+                this.updateTextIfChanged(gpuMemoryTotalElement, `${(gpu.gpu_memory_total / 1024).toFixed(1)} GB`);
+            }
+            
+            if (gpuNameElement) {
+                this.updateTextIfChanged(gpuNameElement, gpu.gpu_name);
+            }
+            
+            if (gpuRingElement) {
+                gpuRingElement.style.display = 'block';
+                const circumference = 2 * Math.PI * 35;
+                const offset = circumference - (gpu.gpu_usage / 100) * circumference;
+                gpuRingElement.style.strokeDasharray = `${circumference} ${circumference}`;
+                gpuRingElement.style.strokeDashoffset = offset;
+                
+                // 根据使用率设置颜色
+                if (gpu.gpu_usage > 80) {
+                    gpuRingElement.style.stroke = 'var(--danger-color)';
+                } else if (gpu.gpu_usage > 60) {
+                    gpuRingElement.style.stroke = 'var(--warning-color)';
+                } else {
+                    gpuRingElement.style.stroke = 'var(--warning-color)';
+                }
+            }
+        }
+    }
+
+    /**
+     * 更新版本信息
+     */
+    updateVersionInfo(version) {
+        const versionElement = document.getElementById('backendVersion');
+        if (versionElement) {
+            this.updateTextIfChanged(versionElement, `版本: ${version}`);
+        }
+    }
+
+    /**
+     * 更新网络连接数信息
+     */
+    updateNetworkConnections(connections) {
+        const connectionsElement = document.getElementById('networkConnections');
+        const activeConnectionsElement = document.getElementById('activeConnections');
+        const statusElement = document.getElementById('connectionsStatus');
+        
+        if (connectionsElement) {
+            this.updateTextIfChanged(connectionsElement, connections.toString());
+        }
+        
+        if (activeConnectionsElement) {
+            this.updateTextIfChanged(activeConnectionsElement, connections.toString());
+        }
+        
+        if (statusElement) {
+            if (connections > 1000) {
+                statusElement.textContent = '高负载';
+                statusElement.className = 'info-value status-error';
+            } else if (connections > 500) {
+                statusElement.textContent = '中等';
+                statusElement.className = 'info-value status-warning';
+            } else {
+                statusElement.textContent = '正常';
+                statusElement.className = 'info-value status-ok';
+            }
+        }
+    }
+
+    /**
+     * 更新显卡信息
+     */
+    updateGPUInfo(gpu) {
+        const gpuUsageElement = document.getElementById('gpuUsage');
+        const gpuMemoryUsedElement = document.getElementById('gpuMemoryUsed');
+        const gpuMemoryTotalElement = document.getElementById('gpuMemoryTotal');
+        const gpuNameElement = document.getElementById('gpuName');
+        const gpuRingElement = document.getElementById('gpuRing');
+        
+        if (!gpu.has_gpu) {
+            // 没有显卡的情况
+            if (gpuUsageElement) {
+                gpuUsageElement.textContent = '无显卡';
+                gpuUsageElement.style.color = 'var(--text-muted)';
+            }
+            if (gpuMemoryUsedElement) {
+                gpuMemoryUsedElement.textContent = '--';
+            }
+            if (gpuMemoryTotalElement) {
+                gpuMemoryTotalElement.textContent = '--';
+            }
+            if (gpuNameElement) {
+                gpuNameElement.textContent = '该服务器无显卡';
+            }
+            if (gpuRingElement) {
+                gpuRingElement.style.display = 'none';
+            }
+        } else {
+            // 有显卡的情况
+            if (gpuUsageElement) {
+                this.updateTextIfChanged(gpuUsageElement, `${gpu.gpu_usage}%`);
+                
+                // 根据使用率设置颜色
+                if (gpu.gpu_usage > 80) {
+                    gpuUsageElement.style.color = 'var(--danger-color)';
+                } else if (gpu.gpu_usage > 60) {
+                    gpuUsageElement.style.color = 'var(--warning-color)';
+                } else {
+                    gpuUsageElement.style.color = 'var(--warning-color)';
+                }
+            }
+            
+            if (gpuMemoryUsedElement) {
+                this.updateTextIfChanged(gpuMemoryUsedElement, `${(gpu.gpu_memory_used / 1024).toFixed(1)} GB`);
+            }
+            
+            if (gpuMemoryTotalElement) {
+                this.updateTextIfChanged(gpuMemoryTotalElement, `${(gpu.gpu_memory_total / 1024).toFixed(1)} GB`);
+            }
+            
+            if (gpuNameElement) {
+                this.updateTextIfChanged(gpuNameElement, gpu.gpu_name);
+            }
+            
+            if (gpuRingElement) {
+                gpuRingElement.style.display = 'block';
+                const circumference = 2 * Math.PI * 35;
+                const offset = circumference - (gpu.gpu_usage / 100) * circumference;
+                gpuRingElement.style.strokeDasharray = `${circumference} ${circumference}`;
+                gpuRingElement.style.strokeDashoffset = offset;
+                
+                // 根据使用率设置颜色
+                if (gpu.gpu_usage > 80) {
+                    gpuRingElement.style.stroke = 'var(--danger-color)';
+                } else if (gpu.gpu_usage > 60) {
+                    gpuRingElement.style.stroke = 'var(--warning-color)';
+                } else {
+                    gpuRingElement.style.stroke = 'var(--warning-color)';
+                }
+            }
+        }
+    }
+
+    /**
+     * 更新版本信息
+     */
+    updateVersionInfo(version) {
+        const versionElement = document.getElementById('backendVersion');
+        if (versionElement) {
+            this.updateTextIfChanged(versionElement, `版本: ${version}`);
+        }
     }
 
     /**

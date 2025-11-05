@@ -24,12 +24,16 @@
                 <span>服务器监控系统</span>
             </div>
             <div class="nav-controls">
-                <div class="server-selector">
-                    <label for="serverSelect">选择服务器:</label>
-                    <select id="serverSelect" class="server-select">
-                        <option value="">正在加载服务器列表...</option>
-                    </select>
-                </div>
+                    <div class="server-selector">
+                        <label for="serverSelect">选择服务器:</label>
+                        <select id="serverSelect" class="server-select">
+                            <option value="">正在加载服务器列表...</option>
+                        </select>
+                        <div class="version-info">
+                            <i class="fas fa-code-branch"></i>
+                            <span id="backendVersion">版本: --</span>
+                        </div>
+                    </div>
                 <div class="refresh-controls">
                     <button id="refreshBtn" class="btn btn-primary">
                         <i class="fas fa-sync-alt"></i>
@@ -143,7 +147,7 @@
                     </div>
                 </div>
 
-                <!-- 网络卡片 -->
+                <!-- 网络流量卡片 -->
                 <div class="metric-card network-card">
                     <div class="card-header">
                         <i class="fas fa-network-wired"></i>
@@ -169,6 +173,65 @@
                         <div class="traffic-total">
                             <span>今日流量:</span>
                             <span id="todayTraffic">-- GB</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 网络连接数卡片 -->
+                <div class="metric-card connections-card">
+                    <div class="card-header">
+                        <i class="fas fa-plug"></i>
+                        <h3>网络连接</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="metric-value">
+                            <span id="networkConnections" class="value">--</span>
+                            <div class="connections-icon">
+                                <i class="fas fa-link"></i>
+                            </div>
+                        </div>
+                        <div class="metric-details">
+                            <div class="detail-item">
+                                <span>活动连接数:</span>
+                                <span id="activeConnections">--</span>
+                            </div>
+                            <div class="detail-item">
+                                <span>状态:</span>
+                                <span id="connectionsStatus" class="status-ok">正常</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 显卡信息卡片 -->
+                <div class="metric-card gpu-card">
+                    <div class="card-header">
+                        <i class="fas fa-desktop"></i>
+                        <h3>显卡状态</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="metric-value">
+                            <span id="gpuUsage" class="value">--%</span>
+                            <div class="progress-ring">
+                                <svg width="80" height="80" viewBox="0 0 80 80">
+                                    <circle class="progress-ring-bg" cx="40" cy="40" r="35"></circle>
+                                    <circle class="progress-ring-fill" id="gpuRing" cx="40" cy="40" r="35"></circle>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="metric-details">
+                            <div class="detail-item">
+                                <span>显存使用:</span>
+                                <span id="gpuMemoryUsed">-- GB</span>
+                            </div>
+                            <div class="detail-item">
+                                <span>总显存:</span>
+                                <span id="gpuMemoryTotal">-- GB</span>
+                            </div>
+                            <div class="detail-item">
+                                <span>显卡型号:</span>
+                                <span id="gpuName">--</span>
+                            </div>
                         </div>
                     </div>
                 </div>

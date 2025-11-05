@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # 导入自定义模块
 from core.config import settings
-from api.routes import router as monitoring_router
+from api.routes import router as monitoring_router, init_traffic_system
 from api.health import router as health_router
 
 # 创建FastAPI应用实例
@@ -20,6 +20,12 @@ app = FastAPI(
     description="实时监控服务器性能指标的RESTful API",
     version="1.0.0"
 )
+
+# 应用启动时初始化流量系统
+@app.on_event("startup")
+async def startup_event():
+    init_traffic_system()
+    print("流量监控系统已初始化")
 
 # 配置CORS中间件
 app.add_middleware(
