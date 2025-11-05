@@ -1,0 +1,30 @@
+{
+  "servers": [
+    {
+      "id": "local",
+      "name": "本地服务器",
+      "url": "http://localhost:48877/api/status",
+      "description": "本地开发环境"
+    },
+    {
+      "id": "prod-1",
+      "name": "生产服务器1",
+      "url": "http://192.168.1.100:48877/api/status",
+      "description": "主要生产服务器"
+    },
+    {
+      "id": "prod-2", 
+      "name": "生产服务器2",
+      "url": "http://192.168.1.101:48877/api/status",
+      "description": "备用生产服务器"
+    },
+    {
+      "id": "test-1",
+      "name": "测试服务器1",
+      "url": "http://192.168.1.200:48877/api/status",
+      "description": "测试环境服务器"
+    }
+  ],
+  "defaultServer": "local",
+  "minRefreshInterval": 5000
+}
