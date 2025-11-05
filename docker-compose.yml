@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  server-monitor:
+    build: .
+    container_name: server-monitor
+    ports:
+      - "48877:48877"
+    volumes:
+      - ./logs:/app/logs
+      - ./backend:/app/backend
+      - ./frontend:/app/frontend
+    environment:
+      - HOST=0.0.0.0
+      - PORT=48877
+      - DEBUG=False
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:48877/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "description=服务器监控系统"
+      - "version=1.0.0"
+
+  nginx:
+    image: nginx:alpine
+    container_name: server-monitor-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./frontend:/usr/share/nginx/html
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - server-monitor
+    restart: unless-stopped
+    labels:
+      - "description=前端静态文件服务"
+
+networks:
+  default:
+    name: server-monitor-network

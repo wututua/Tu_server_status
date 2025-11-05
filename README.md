@@ -1,9 +1,11 @@
 # 🚀 Server Monitor - 实时服务器监控系统
 
+> **项目仓库**: [https://github.com/wututua/Tu_server_status/](https://github.com/wututua/Tu_server_status/)
+
 [![Python](https://img.shields.io/badge/Python-3.7+-blue?logo=python)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.68+-green?logo=fastapi)](https://fastapi.tiangolo.com)
 [![License](https://img.shields.io/badge/License-GPL3.0-blue)](LICENSE)
-[![GitHub stars](https://img.shields.io/github/stars/user/server-monitor?style=social)](https://github.com/user/server-monitor)
+[![GitHub stars](https://img.shields.io/github/stars/wututua/Tu_server_status?style=social)](https://github.com/wututua/Tu_server_status)
 
 一个基于FastAPI后端和现代HTML5前端的实时服务器监控系统，提供全面的服务器性能指标监控和可视化展示。
 
@@ -48,8 +50,8 @@
 ### 一键启动 (推荐)
 ```bash
 # 克隆项目
-git clone https://github.com/your-username/server-monitor.git
-cd server-monitor
+git clone https://github.com/wututua/Tu_server_status.git
+cd Tu_server_status
 
 # 安装依赖
 cd backend
@@ -155,7 +157,7 @@ open frontend/index.html
 #### 方法一：直接运行（推荐）
 ```bash
 # 1. 克隆项目
-git clone https://github.com/your-username/server-monitor.git
+git clone https://github.com/wututua/Tu_server_status.git
 cd server-monitor
 
 # 2. 安装Python依赖
@@ -771,7 +773,7 @@ server-monitor/
 #### 环境设置
 ```bash
 # 1. Fork项目
-git clone https://github.com/your-username/server-monitor.git
+git clone https://github.com/wututua/Tu_server_status.git
 cd server-monitor
 
 # 2. 创建开发分支
@@ -883,7 +885,7 @@ updateUI(data) {
 
 ## 🌟 Star历史
 
-[![Stargazers over time](https://starchart.cc/your-username/server-monitor.svg)](https://starchart.cc/your-username/server-monitor)
+[![Stargazers over time](https://starchart.cc/wututua/Tu_server_status.svg)](https://starchart.cc/wututua/Tu_server_status)
 
 ## 🔗 相关项目
 
@@ -893,10 +895,10 @@ updateUI(data) {
 
 ## 📞 联系方式
 
-- **项目维护者**: [Your Name](https://github.com/your-username)
-- **邮箱**: your-email@example.com
-- **GitHub Issues**: [提交问题](https://github.com/your-username/server-monitor/issues)
-- **讨论区**: [GitHub Discussions](https://github.com/your-username/server-monitor/discussions)
+- **项目维护者**: [wututua](https://github.com/wututua)
+- **游戏联系邮箱**: wututua@qq.com
+- **GitHub Issues**: [提交问题](https://github.com/wututua/Tu_server_status/issues)
+- **讨论区**: [GitHub Discussions](https://github.com/wututua/Tu_server_status/discussions)
 
 ## 🙏 致谢
 
@@ -908,7 +910,7 @@ updateUI(data) {
 
 **如果这个项目对您有帮助，请给个⭐️支持一下！**
 
-[![GitHub stars](https://img.shields.io/github/stars/your-username/server-monitor?style=social)](https://github.com/your-username/server-monitor)
-[![GitHub forks](https://img.shields.io/github/forks/your-username/server-monitor?style=social)](https://github.com/your-username/server-monitor)
+[![GitHub stars](https://img.shields.io/github/stars/wututua/Tu_server_status?style=social)](https://github.com/wututua/Tu_server_status)
+[![GitHub forks](https://img.shields.io/github/forks/wututua/Tu_server_status?style=social)](https://github.com/wututua/Tu_server_status)
 
 </div>
