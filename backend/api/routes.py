@@ -80,33 +80,6 @@ def init_traffic_system():
     # 设置 last_net_io 为当前值
     last_net_io = current_net_io
 
-# 初始化流量数据系统
-def init_traffic_system():
-    """在应用启动时初始化流量数据系统"""
-    global today_traffic, last_net_io
-    
-    # 加载现有数据
-    load_traffic_data()
-    
-    # 初始化网络计数器
-    current_net_io = psutil.net_io_counters()
-    
-    # 如果今天是第一次运行或需要重置，初始化基准值
-    current_time = get_utc8_time()
-    today_date = current_time.strftime("%Y-%m-%d")
-    
-    if today_traffic["last_reset_date"] is None or today_traffic["last_reset_date"] != today_date:
-        print(f"初始化流量系统（UTC+8 {today_date}）")
-        today_traffic["upload_bytes"] = 0
-        today_traffic["download_bytes"] = 0
-        today_traffic["last_reset_date"] = today_date
-        today_traffic["last_net_io_bytes_sent"] = current_net_io.bytes_sent if current_net_io else 0
-        today_traffic["last_net_io_bytes_recv"] = current_net_io.bytes_recv if current_net_io else 0
-        save_traffic_data()
-    
-    # 设置 last_net_io 为当前值
-    last_net_io = current_net_io
-
 # 检查是否需要重置今日流量
 def check_and_reset_traffic():
     global today_traffic, last_net_io
@@ -191,13 +164,27 @@ async def get_server_status():
     load_traffic_data()
     check_and_reset_traffic()
     
-    # CPU 信息
-    cpu_info = {
-        "usage_percent": psutil.cpu_percent(interval=1),
-        "core_count": psutil.cpu_count(),
-        "current_freq": psutil.cpu_freq().current if psutil.cpu_freq() else 0,
-        "max_freq": psutil.cpu_freq().max if psutil.cpu_freq() else 0
-    }
+    # CPU 信息 - 使用统一的系统监控数据源，确保数据一致性
+    try:
+        from monitor.system_monitor import get_system_hardware_info
+        system_info = get_system_hardware_info()
+        cpu_info = system_info.get("cpu_info", {})
+        
+        cpu_info = {
+            "usage_percent": cpu_info.get("usage_percent", psutil.cpu_percent(interval=1)),
+            "core_count": cpu_info.get("total_cores", psutil.cpu_count()),
+            "current_freq": cpu_info.get("current_frequency", psutil.cpu_freq().current if psutil.cpu_freq() else 0),
+            "max_freq": cpu_info.get("max_frequency", psutil.cpu_freq().max if psutil.cpu_freq() else 0)
+        }
+    except Exception as e:
+        # 异常时回退到基础获取方式
+        cpu_freq = psutil.cpu_freq()
+        cpu_info = {
+            "usage_percent": psutil.cpu_percent(interval=1),
+            "core_count": psutil.cpu_count(),
+            "current_freq": cpu_freq.current if cpu_freq else 0,
+            "max_freq": cpu_freq.max if cpu_freq else 0
+        }
     
     # 内存信息
     memory = psutil.virtual_memory()
@@ -308,13 +295,32 @@ async def get_server_status():
 @router.get("/cpu")
 async def get_cpu_status():
     """获取 CPU 状态信息"""
-    cpu_info = {
-        "usage_percent": psutil.cpu_percent(interval=1),
-        "core_count": psutil.cpu_count(),
-        "current_freq": psutil.cpu_freq().current if psutil.cpu_freq() else 0,
-        "max_freq": psutil.cpu_freq().max if psutil.cpu_freq() else 0
-    }
-    return cpu_info
+    from monitor.system_monitor import get_system_hardware_info
+    
+    try:
+        system_info = get_system_hardware_info()
+        cpu_info = system_info.get("cpu_info", {})
+        
+        # 统一格式返回
+        return {
+            "usage_percent": cpu_info.get("usage_percent", 0),
+            "core_count": cpu_info.get("total_cores", 0),
+            "current_freq": cpu_info.get("current_frequency", 0),
+            "max_freq": cpu_info.get("max_frequency", 0),
+            "model": cpu_info.get("model", "Unknown"),
+            "vendor": cpu_info.get("vendor", "Unknown")
+        }
+    except Exception as e:
+        # 异常时回退到基础获取方式
+        cpu_freq = psutil.cpu_freq()
+        return {
+            "usage_percent": psutil.cpu_percent(interval=1),
+            "core_count": psutil.cpu_count(),
+            "current_freq": cpu_freq.current if cpu_freq else 0,
+            "max_freq": cpu_freq.max if cpu_freq else 0,
+            "model": "Unknown",
+            "vendor": "Unknown"
+        }
 
 @router.get("/memory")
 async def get_memory_status():

@@ -1086,4 +1086,12 @@ class ServerMonitor {
 // 页面加载完成后初始化应用
 document.addEventListener('DOMContentLoaded', () => {
     window.serverMonitor = new ServerMonitor();
+    
+    // 初始化系统信息卡片
+    try {
+        window.systemInfoCard = new SystemInfoCard('systemInfoCardContainer');
+        console.log('系统信息卡片组件初始化成功');
+    } catch (error) {
+        console.error('系统信息卡片组件初始化失败:', error);
+    }
 });
